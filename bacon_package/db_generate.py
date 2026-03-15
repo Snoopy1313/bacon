@@ -2,8 +2,10 @@ from pathlib import Path
 import sqlite3
 from typing import List, Optional
 
+
 def initialize_connection() -> sqlite3.Connection:
     return sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
+
 
 def enable_foreign_keys(conn: sqlite3.Connection) -> None:
     try:
