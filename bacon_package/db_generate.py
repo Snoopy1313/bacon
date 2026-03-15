@@ -6,7 +6,7 @@ from typing import List, Optional
 def enable_foreign_keys(conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
-        cur.execute("PRAGMA foreign_keys = ON;")
+        cur.execute("PRAGMA foreign_keys = OFF;")
         conn.commit()
     except Exception as e:
         print(f"An error occurred during enable_foreign_keys: {e}")
@@ -98,7 +98,7 @@ def add_movie(id: int, name: str, conn: sqlite3.Connection) -> None:
         print(f"An error occurred during add_movie: {e}")
 
 
-def add_movie_to_actor(movie_id: str, actor_id: str, conn: sqlite3.Connection) -> None:
+def add_movie_to_actor(movie_id: int, actor_id: str, conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
         data = (movie_id, actor_id)
@@ -152,7 +152,7 @@ def get_movie_id(movie_name: str, conn: sqlite3.Connection) -> str:
         return ""
 
 
-def get_movie_name(movie_id: str, conn: sqlite3.Connection) -> str:
+def get_movie_name(movie_id: int, conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         cur.execute("SELECT Name FROM movies WHERE ID = ?", (movie_id,))
@@ -163,7 +163,7 @@ def get_movie_name(movie_id: str, conn: sqlite3.Connection) -> str:
         return ""
 
 
-def get_movie_actors(movie_id: str, conn: sqlite3.Connection) -> List[str]:
+def get_movie_actors(movie_id: int, conn: sqlite3.Connection) -> List[str]:
     try:
         cur = conn.cursor()
         cur.execute("SELECT ActorID FROM actors_movies WHERE MovieID = ? ", (movie_id,))
@@ -185,7 +185,7 @@ def get_actor_id(name: str, conn: sqlite3.Connection) -> str:
         return ""
 
 
-def get_actor_name(actor_id: str, conn: sqlite3.Connection) -> str:
+def get_actor_name(actor_id: int, conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         cur.execute("SELECT Name FROM actors WHERE ID = ?", (actor_id,))
@@ -196,7 +196,7 @@ def get_actor_name(actor_id: str, conn: sqlite3.Connection) -> str:
         return ""
 
 
-def get_actor_movies(actor_id: str, conn: sqlite3.Connection) -> List[str]:
+def get_actor_movies(actor_id: int, conn: sqlite3.Connection) -> List[str]:
     try:
         cur = conn.cursor()
         cur.execute("SELECT MovieID FROM actors_movies WHERE ActorID = ? ", (actor_id,))
@@ -207,7 +207,7 @@ def get_actor_movies(actor_id: str, conn: sqlite3.Connection) -> List[str]:
         return ""
 
 
-def get_colleagues_of_actor(actor_id: str, conn: sqlite3.Connection) -> List[str]:
+def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[str]:
     try:
         cur = conn.cursor()
         select_colleagues_query = (
