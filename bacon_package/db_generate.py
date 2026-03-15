@@ -8,21 +8,22 @@ def initialize_connection() -> sqlite3.Connection:
 def enable_foreign_keys(conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
-        cur.execute("PRAGMA foreign_keys = OFF;")
+        cur.execute("PRAGMA foreign_keys = ON;")
         conn.commit()
+        return "Success"
     except Exception as e:
         print(f"An error occurred during enable_foreign_keys: {e}")
+        return "Failure"
 
 
-def create_actor_table(conn: sqlite3.Connection) -> None:
+def create_actor_table(conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         create_table_query = (
             "CREATE TABLE IF NOT EXISTS actors ("
             "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "Name varchar(255) NOT NULL,"
-            "UNIQUE (Name)"
-            ");"
+            "Name varchar(255) NOT NULL"
+            ")"
         )
         cur.execute(create_table_query)
         conn.commit()
@@ -33,15 +34,14 @@ def create_actor_table(conn: sqlite3.Connection) -> None:
         return "Failure"
 
 
-def create_movies_table(conn: sqlite3.Connection) -> None:
+def create_movies_table(conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         create_table_query = (
             "CREATE TABLE IF NOT EXISTS movies ("
             "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "Name varchar(255) NOT NULL,"
-            "UNIQUE (Name)"
-            ");"
+            "Name varchar(255) NOT NULL"
+            ")"
         )
         cur.execute(create_table_query)
         conn.commit()
@@ -52,7 +52,7 @@ def create_movies_table(conn: sqlite3.Connection) -> None:
         return "Failure"
 
 
-def create_actors_movies_table(conn: sqlite3.Connection) -> None:
+def create_actors_movies_table(conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         create_table_query = (
@@ -73,7 +73,7 @@ def create_actors_movies_table(conn: sqlite3.Connection) -> None:
         return "Failure"
 
 
-def create_tables(conn: sqlite3.Connection) -> None:
+def create_tables(conn: sqlite3.Connection) -> str:
     enable_foreign_keys(conn)
     create_actor_table(conn)
     create_movies_table(conn)
@@ -143,12 +143,12 @@ def get_actors_movies(conn: sqlite3.Connection) -> List:
         return []
 
 
-def get_movie_id(movie_name: str, conn: sqlite3.Connection) -> str:
+def get_movie_id(movie_name: str, conn: sqlite3.Connection) -> List[str]:
     try:
         cur = conn.cursor()
         cur.execute("SELECT ID FROM movies WHERE Name = ?", (movie_name,))
-        movie_id = cur.fetchone()
-        return movie_id[0]
+        movies_id = cur.fetchall()
+        return [movie_tuple[0] for movie_tuple in movies_id]
     except Exception as e:
         print(f"An error occurred during get_movie_id: {e}")
         return ""
@@ -176,12 +176,12 @@ def get_movie_actors(movie_id: int, conn: sqlite3.Connection) -> List[str]:
         return ""
 
 
-def get_actor_id(name: str, conn: sqlite3.Connection) -> str:
+def get_actor_id(name: str, conn: sqlite3.Connection) -> List[str]:
     try:
         cur = conn.cursor()
         cur.execute("SELECT ID FROM actors WHERE Name = ?", (name,))
-        actor_id = cur.fetchone()
-        return actor_id[0]
+        actors_id = cur.fetchall()
+        return [actor_tuple[0] for actor_tuple in actors_id]
     except Exception as e:
         print(f"An error occurred during get_actor_id: {e}")
         return ""
