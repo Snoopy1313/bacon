@@ -1,6 +1,6 @@
 from pathlib import Path
 import sqlite3
-from typing import List
+from typing import List, Optional
 
 
 def enable_foreign_keys(conn: sqlite3.Connection) -> None:
@@ -77,21 +77,21 @@ def create_tables(conn: sqlite3.Connection) -> None:
     create_actors_movies_table(conn)
 
 
-def add_actor(name: str, conn: sqlite3.Connection) -> None:
+def add_actor(id: int, name: str, conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
-        data = (name,)
-        cur.execute("INSERT INTO actors(Name) VALUES(?)", data)
+        data = (id, name)
+        cur.execute("INSERT INTO actors(ID, Name) VALUES(?, ?)", data)
         conn.commit()
     except Exception as e:
         print(f"An error occurred during add_actor: {e}")
 
 
-def add_movie(name: str, conn: sqlite3.Connection) -> None:
+def add_movie(id: int, name: str, conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
-        data = (name,)
-        cur.execute("INSERT INTO movies(Name) VALUES(?)", data)
+        data = (id, name)
+        cur.execute("INSERT INTO movies(ID, Name) VALUES(?, ?)", data)
         conn.commit()
     except Exception as e:
         print(f"An error occurred during add_movie: {e}")
@@ -226,9 +226,9 @@ if __name__ == "__main__":
     conn = sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
     cur = conn.cursor()
     create_tables(conn)
-    add_actor("Marik Urman", conn)
-    add_actor("Ely Ros", conn)
-    add_movie("Iron", conn)
+    add_actor(1, "Marik Urman", conn)
+    add_actor(5, "Ely Ros", conn)
+    add_movie(1, "Iron", conn)
     movie_id = get_movie_id("Iron", conn)
     marik_id = get_actor_id("Marik Urman", conn)
     ely_id = get_actor_id("Ely Ros", conn)
