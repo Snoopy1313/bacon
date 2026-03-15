@@ -2,6 +2,8 @@ from pathlib import Path
 import sqlite3
 from typing import List, Optional
 
+def initialize_connection() -> sqlite3.Connection:
+    return sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
 
 def enable_foreign_keys(conn: sqlite3.Connection) -> None:
     try:
@@ -224,18 +226,5 @@ def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[str
 
 
 if __name__ == "__main__":
-    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
+    conn = initialize_connection()
     create_tables(conn)
-    add_actor(1, "Marik Urman", conn)
-    add_actor(5, "Ely Ros", conn)
-    add_movie(1, "Iron", conn)
-    movie_id = get_movie_id("Iron", conn)
-    marik_id = get_actor_id("Marik Urman", conn)
-    ely_id = get_actor_id("Ely Ros", conn)
-    add_movie_to_actor(movie_id, marik_id, conn)
-    add_movie_to_actor(movie_id, ely_id, conn)
-    print(get_actors(conn))
-    print(get_movies(conn))
-    print(get_actors_movies(conn))
-    print(get_movie_actors(movie_id, conn))
-    print(get_colleagues_of_actor(marik_id, conn))
