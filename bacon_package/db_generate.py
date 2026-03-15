@@ -18,9 +18,8 @@ def create_actor_table(conn: sqlite3.Connection) -> None:
         create_table_query = (
             "CREATE TABLE IF NOT EXISTS actors ("
             "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "FirstName varchar(255) NOT NULL,"
-            "LastName varchar(255) NOT NULL,"
-            "UNIQUE (FirstName, LastName)"
+            "Name varchar(255) NOT NULL,"
+            "UNIQUE (Name)"
             ");"
         )
         cur.execute(create_table_query)
@@ -78,11 +77,11 @@ def create_tables(conn: sqlite3.Connection) -> None:
     create_actors_movies_table(conn)
 
 
-def add_actor(first_name: str, last_name: str, conn: sqlite3.Connection) -> None:
+def add_actor(name: str, conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
-        data = (first_name, last_name)
-        cur.execute("INSERT INTO actors(FirstName, LastName) VALUES(?, ?)", data)
+        data = (name,)
+        cur.execute("INSERT INTO actors(Name) VALUES(?)", data)
         conn.commit()
     except Exception as e:
         print(f"An error occurred during add_actor: {e}")
@@ -174,10 +173,10 @@ def get_movie_actors(movie_id: str, conn: sqlite3.Connection) -> List[str]:
         return ""
 
 
-def get_actor_id(first_name: str, last_name: str, conn: sqlite3.Connection) -> str:
+def get_actor_id(name: str, conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
-        cur.execute("SELECT ID FROM actors WHERE FirstName = ? AND LastName = ?", (first_name, last_name))
+        cur.execute("SELECT ID FROM actors WHERE Name = ?", (name,))
         actor_id = cur.fetchone()
         return actor_id[0]
     except Exception as e:
@@ -188,9 +187,9 @@ def get_actor_id(first_name: str, last_name: str, conn: sqlite3.Connection) -> s
 def get_actor_name(actor_id: str, conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
-        cur.execute("SELECT FirstName, LastName FROM actors WHERE ID = ?", (actor_id,))
+        cur.execute("SELECT Name FROM actors WHERE ID = ?", (actor_id,))
         actor_name = cur.fetchone()
-        return actor_name
+        return actor_name[0]
     except Exception as e:
         print(f"An error occurred during get_actor_name: {e}")
         return ""
@@ -226,14 +225,13 @@ def get_colleagues_of_actor(actor_id: str, conn: sqlite3.Connection) -> List[str
 if __name__ == "__main__":
     conn = sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
     cur = conn.cursor()
-
     create_tables(conn)
-    add_actor("Marik", "Urman", conn)
-    add_actor("Ely", "Ros", conn)
+    add_actor("Marik Urman", conn)
+    add_actor("Ely Ros", conn)
     add_movie("Iron", conn)
     movie_id = get_movie_id("Iron", conn)
-    marik_id = get_actor_id("Marik", "Urman", conn)
-    ely_id = get_actor_id("Ely", "Ros", conn)
+    marik_id = get_actor_id("Marik Urman", conn)
+    ely_id = get_actor_id("Ely Ros", conn)
     add_movie_to_actor(movie_id, marik_id, conn)
     add_movie_to_actor(movie_id, ely_id, conn)
     print(get_actors(conn))
