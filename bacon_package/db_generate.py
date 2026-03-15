@@ -59,6 +59,7 @@ def create_actors_movies_table(conn: sqlite3.Connection) -> None:
             "ActorID INTEGER NOT NULL,"
             "FOREIGN KEY(MovieID) REFERENCES movies(ID)"
             "FOREIGN KEY(ActorID) REFERENCES actors(ID)"
+            "PRIMARY KEY (MovieID, ActorID)"
             ");"
         )
         cur.execute(create_table_query)
@@ -224,7 +225,6 @@ def get_colleagues_of_actor(actor_id: str, conn: sqlite3.Connection) -> List[str
 
 if __name__ == "__main__":
     conn = sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
-    cur = conn.cursor()
     create_tables(conn)
     add_actor(1, "Marik Urman", conn)
     add_actor(5, "Ely Ros", conn)
