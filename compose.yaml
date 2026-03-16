@@ -1,0 +1,15 @@
+services:
+  backend_server:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      PYTHONUNBUFFERED: 1
+    tty: true
+    stdin_open: true
+  
+  web_server:
+    build: ./bacon_web
+    ports:
+      - "5173:5173"
+
