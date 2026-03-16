@@ -249,8 +249,25 @@ def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[int
         return [-1]
 
 
-if __name__ == "__main__":
-    conn = initialize_connection()
+def reset_db(conn: sqlite3.Connection) -> str:
+    try:
+        cur = conn.cursor()
+        script_query = (
+            "PRAGMA writable_schema = 1;"
+            "DELETE FROM sqlite_master;"
+            "PRAGMA writable_schema = 0;"
+            "VACUUM;"
+            "PRAGMA integrity_check;"
+        )
+        cur.executescript(script_query)
+        conn.commit()
+        return "Success"
+    except Exception as e:
+        print(f"An error occurred during enable_foreign_keys: {e}")
+        return "Failure"
+
+
+def initialize_db(conn: sqlite3.Connection) -> None:
     create_tables(conn)
     for i in range(1, 26):
         add_actor(i, f"a{i}", conn)
@@ -269,3 +286,9 @@ if __name__ == "__main__":
     for movie_id, actors in relations.items():
         for actor_id in actors:
             add_movie_to_actor(movie_id, actor_id, conn)
+
+
+if __name__ == "__main__":
+    conn = initialize_connection()
+    reset_db(conn)
+    initialize_db(conn)
