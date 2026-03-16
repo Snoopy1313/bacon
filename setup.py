@@ -6,5 +6,5 @@ setup(
     description="A bacon_package",
     author="Marik",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=["flask"],
 )
