@@ -6,6 +6,7 @@ app = Flask("rpyc")
 CORS(app)
 conn = initialize_connection()
 
+
 @app.get("/get_bacon_distance/<source_name>/<target_name>")
 def get_bacon_distance(source_name: str, target_name: str):
     try:
