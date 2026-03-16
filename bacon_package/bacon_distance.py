@@ -14,6 +14,9 @@ def bacon_distance(source_id: int, target_id: int) -> Union[int, float]:
     """
     if not (actor_exists(source_id, conn) and actor_exists(target_id, conn)):
         raise LookupError("No such source or target")
+    
+    if source_id == target_id:
+        return 0
 
     visited = [source_id]
     queue = [(source_id, 0)]
