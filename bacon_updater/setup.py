@@ -6,5 +6,5 @@ setup(
     description="A updater_package",
     author="Marik",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=["pika"],
 )
