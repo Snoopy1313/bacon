@@ -264,7 +264,7 @@ if __name__ == "__main__":
         3: [8, 9, 10, 11],
         4: [11, 12, 13, 14, 15],
         5: [15, 16, 17, 18, 19, 20],
-        6: [21, 22, 23, 24, 25]
+        6: [21, 22, 23, 24, 25],
     }
     for movie_id, actors in relations.items():
         for actor_id in actors:
