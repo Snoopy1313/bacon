@@ -8,6 +8,7 @@ form {
 
 label {
   font-size: 30px;
+  width: 500px;
 }
 
 input, button {

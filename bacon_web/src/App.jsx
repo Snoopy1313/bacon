@@ -8,9 +8,17 @@ function App() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let myObject = await fetch(`http://localhost:5000/get_bacon_distance/${source}/${target}`);
-    let myText = await myObject.text();
-    setDistance(myText)
+    let response = await fetch(`http://localhost:5000/get_bacon_distance/${source}/${target}`);
+    if (response.status == 400) {
+      setDistance("No such Actor")
+    }
+    else if (response.status == 200) {
+      let myText = await response.text();
+      setDistance(myText)
+    }
+    else {
+      setDistance("Some error occurred")
+    }
   };
 
   return (
