@@ -249,6 +249,30 @@ def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[int
         return [-1]
 
 
+def get_highest_movie_id(conn: sqlite3.Connection) -> int:
+    try:
+        cur = conn.cursor()
+        select_top_id_query = "SELECT ID FROM movies ORDER BY ID DESC LIMIT 1"
+        cur.execute(select_top_id_query)
+        movie_id = cur.fetchone()
+        return movie_id[0]
+    except Exception as e:
+        print(f"An error occurred during get_highest_movie_id: {e}")
+        return -1
+
+
+def get_highest_actor_id(conn: sqlite3.Connection) -> int:
+    try:
+        cur = conn.cursor()
+        select_top_id_query = "SELECT ID FROM actors ORDER BY ID DESC LIMIT 1"
+        cur.execute(select_top_id_query)
+        actor_id = cur.fetchone()
+        return actor_id[0]
+    except Exception as e:
+        print(f"An error occurred during get_highest_actor_id: {e}")
+        return -1
+
+
 def reset_db(conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
