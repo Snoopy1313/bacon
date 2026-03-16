@@ -7,7 +7,7 @@ def initialize_connection() -> sqlite3.Connection:
     return sqlite3.connect(Path(__file__).parents[1] / "bacon.db", check_same_thread=False)
 
 
-def enable_foreign_keys(conn: sqlite3.Connection) -> None:
+def enable_foreign_keys(conn: sqlite3.Connection) -> str:
     try:
         cur = conn.cursor()
         cur.execute("PRAGMA foreign_keys = ON;")
@@ -75,7 +75,7 @@ def create_actors_movies_table(conn: sqlite3.Connection) -> str:
         return "Failure"
 
 
-def create_tables(conn: sqlite3.Connection) -> str:
+def create_tables(conn: sqlite3.Connection) -> None:
     enable_foreign_keys(conn)
     create_actor_table(conn)
     create_movies_table(conn)
@@ -102,7 +102,7 @@ def add_movie(id: int, name: str, conn: sqlite3.Connection) -> None:
         print(f"An error occurred during add_movie: {e}")
 
 
-def add_movie_to_actor(movie_id: int, actor_id: str, conn: sqlite3.Connection) -> None:
+def add_movie_to_actor(movie_id: int, actor_id: int, conn: sqlite3.Connection) -> None:
     try:
         cur = conn.cursor()
         data = (movie_id, actor_id)
@@ -112,7 +112,7 @@ def add_movie_to_actor(movie_id: int, actor_id: str, conn: sqlite3.Connection) -
         print(f"An error occurred during add_movie_to_actor: {e}")
 
 
-def actor_exists(actor_id: int, conn: sqlite3.Connection) -> bool:
+def actor_exists(actor_id: int, conn: sqlite3.Connection) -> Optional[bool]:
     try:
         cur = conn.cursor()
         data = (actor_id,)
@@ -123,7 +123,7 @@ def actor_exists(actor_id: int, conn: sqlite3.Connection) -> bool:
         print(f"An error occurred during actor_exists: {e}")
 
 
-def movie_exists(movie_id: int, conn: sqlite3.Connection) -> bool:
+def movie_exists(movie_id: int, conn: sqlite3.Connection) -> Optional[bool]:
     try:
         cur = conn.cursor()
         data = (movie_id,)
@@ -175,7 +175,7 @@ def get_movie_id(movie_name: str, conn: sqlite3.Connection) -> List[int]:
         return [movie_tuple[0] for movie_tuple in movies_id]
     except Exception as e:
         print(f"An error occurred during get_movie_id: {e}")
-        return ""
+        return [-1]
 
 
 def get_movie_name(movie_id: int, conn: sqlite3.Connection) -> str:
@@ -197,7 +197,7 @@ def get_movie_actors(movie_id: int, conn: sqlite3.Connection) -> List[int]:
         return [actor_tuple[0] for actor_tuple in actors_id]
     except Exception as e:
         print(f"An error occurred during get_movie_actors: {e}")
-        return ""
+        return [-1]
 
 
 def get_actor_id(name: str, conn: sqlite3.Connection) -> List[int]:
@@ -208,7 +208,7 @@ def get_actor_id(name: str, conn: sqlite3.Connection) -> List[int]:
         return [actor_tuple[0] for actor_tuple in actors_id]
     except Exception as e:
         print(f"An error occurred during get_actor_id: {e}")
-        return ""
+        return [-1]
 
 
 def get_actor_name(actor_id: int, conn: sqlite3.Connection) -> str:
@@ -230,7 +230,7 @@ def get_actor_movies(actor_id: int, conn: sqlite3.Connection) -> List[int]:
         return [movie_tuple[0] for movie_tuple in movies_id]
     except Exception as e:
         print(f"An error occurred during get_actor_movies: {e}")
-        return ""
+        return [-1]
 
 
 def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[int]:
@@ -246,7 +246,7 @@ def get_colleagues_of_actor(actor_id: int, conn: sqlite3.Connection) -> List[int
         return [actor_tuple[0] for actor_tuple in actors_id]
     except Exception as e:
         print(f"An error occurred during get_colleagues_of_actor: {e}")
-        return ""
+        return [-1]
 
 
 if __name__ == "__main__":
