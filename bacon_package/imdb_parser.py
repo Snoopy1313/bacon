@@ -9,9 +9,9 @@ from bacon_package.db_generate import (
     get_colleagues_of_actor,
 )
 
-actors_data_path = Path(__file__).parent / "imdb_data" / "name.basics.tsv"
-movies_data_path = Path(__file__).parent / "imdb_data" / "title.basics.tsv"
-principals_data_path = Path(__file__).parent / "imdb_data" / "title.principals.tsv"
+actors_data_path = str(Path(__file__).parent / "imdb_data" / "name.basics.tsv")
+movies_data_path = str(Path(__file__).parent / "imdb_data" / "title.basics.tsv")
+principals_data_path = str(Path(__file__).parent / "imdb_data" / "title.principals.tsv")
 
 conn = initialize_connection()
 
@@ -39,19 +39,6 @@ def extract_principals(path: str) -> None:
 
 
 if __name__ == "__main__":
-    for i in range(1, 21):
-        add_actor(i, f"a{i}", conn)
-
-    for i in range(1, 6):
-        add_movie(i, f"m{i}", conn)
-
-    relations = {
-        1: [1, 2, 3, 4, 5],
-        2: [5, 6, 7, 8],
-        3: [8, 9, 10, 11],
-        4: [11, 12, 13, 14, 15],
-        5: [15, 16, 17, 18, 19, 20],
-    }
-    for movie_id, actors in relations.items():
-        for actor_id in actors:
-            add_movie_to_actor(movie_id, actor_id, conn)
+    extract_actors(actors_data_path)
+    extract_movies(movies_data_path)
+    extract_principals(principals_data_path)
