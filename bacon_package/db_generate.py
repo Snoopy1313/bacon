@@ -112,6 +112,28 @@ def add_movie_to_actor(movie_id: int, actor_id: str, conn: sqlite3.Connection) -
         print(f"An error occurred during add_movie_to_actor: {e}")
 
 
+def actor_exists(actor_id: int, conn: sqlite3.Connection) -> bool:
+    try:
+        cur = conn.cursor()
+        data = (actor_id,)
+        cur.execute("SELECT ID FROM actors WHERE ID = ?", data)
+        actor = cur.fetchone()
+        return bool(actor)
+    except Exception as e:
+        print(f"An error occurred during actor_exists: {e}")
+
+
+def movie_exists(movie_id: int, conn: sqlite3.Connection) -> bool:
+    try:
+        cur = conn.cursor()
+        data = (movie_id,)
+        cur.execute("SELECT ID FROM movies WHERE ID = ?", data)
+        movie = cur.fetchone()
+        return bool(movie)
+    except Exception as e:
+        print(f"An error occurred during movie_exists: {e}")
+
+
 def get_actors(conn: sqlite3.Connection) -> List:
     try:
         cur = conn.cursor()
