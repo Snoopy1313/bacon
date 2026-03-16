@@ -255,7 +255,7 @@ if __name__ == "__main__":
     for i in range(1, 26):
         add_actor(i, f"a{i}", conn)
 
-    for i in range(1, 6):
+    for i in range(1, 7):
         add_movie(i, f"m{i}", conn)
 
     relations = {
