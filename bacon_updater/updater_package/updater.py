@@ -3,19 +3,9 @@ from pathlib import Path
 import sqlite3
 from typing import List
 import pika
-from bacon_package.db_generate import (
-    get_movie_id,
-    add_movie,
-    get_actor_id,
-    add_actor,
-    add_movie_to_actor,
-    get_highest_actor_id,
-    get_highest_movie_id,
-    get_actors,
-    get_actors_movies,
-    get_movies
-)
+import requests
 
+SERVER_LINK = "http://127.0.0.1:5000"
 
 def db_connection() -> sqlite3.Connection:
     return sqlite3.connect(Path.cwd() / "bacon.db", check_same_thread=False)
@@ -23,7 +13,7 @@ def db_connection() -> sqlite3.Connection:
 
 if __name__ == "__main__":
     db_conn = db_connection()
-    credentials = pika.PlainCredentials('admin', 'admin')
+    credentials = pika.PlainCredentials("admin", "admin")
     rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters("localhost", credentials=credentials))
     channel = rabbit_connection.channel()
     channel.queue_declare(queue="new_movies")
@@ -34,26 +24,21 @@ if __name__ == "__main__":
 
     def callback(ch, method, properties, body):
         data = json.loads(body)
-        print(f"data: {data}")
         movie_name: str = data["Name"]
         movie_actors: List[str] = data["Actors"]
-        base_movie_id = get_highest_movie_id(db_conn)
-        base_actor_id = get_highest_actor_id(db_conn)
+        base_movie_id = requests.get(f"{SERVER_LINK}/get_highest_movie_id").json()["data"]
+        base_actor_id = requests.get(f"{SERVER_LINK}/get_highest_actor_id").json()["data"]
 
-
-        movie_id = get_movie_id(movie_name, db_conn)
-        movie_id =  movie_id[0] if movie_id else base_movie_id + 1
-        add_movie(movie_id, movie_name, db_conn)
+        movie_id = requests.get(f"{SERVER_LINK}/get_movie_id/{movie_name}").json()["data"]
+        movie_id = movie_id[0] if movie_id else base_movie_id + 1
+        requests.post(f"{SERVER_LINK}/add_movie/{movie_id}/{movie_name}")
 
         for index, actor in enumerate(movie_actors):
-            actor_id = get_actor_id(actor, db_conn)
+            actor_id = requests.get(f"{SERVER_LINK}/get_actor_id/{actor}").json()["data"]
             actor_id = actor_id[0] if actor_id else base_actor_id + index + 1
-            add_actor(actor_id, actor, db_conn)
-            add_movie_to_actor(movie_id, actor_id, db_conn)
+            requests.post(f"{SERVER_LINK}/add_actor/{actor_id}/{actor}")
+            requests.post(f"{SERVER_LINK}/add_movie_to_actor/{movie_id}/{actor_id}")
 
-        print(get_actors(db_conn))
-        print(get_movies(db_conn))
-        print(get_actors_movies(db_conn))
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     channel.basic_consume(queue="new_movies", on_message_callback=callback)
