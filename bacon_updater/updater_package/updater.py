@@ -1,20 +1,26 @@
 import json
-from pathlib import Path
-import sqlite3
+import time
 from typing import List
 import pika
 import requests
 
 SERVER_LINK = "http://127.0.0.1:5000"
 
-def db_connection() -> sqlite3.Connection:
-    return sqlite3.connect(Path.cwd() / "bacon.db", check_same_thread=False)
 
 
 if __name__ == "__main__":
-    db_conn = db_connection()
     credentials = pika.PlainCredentials("admin", "admin")
-    rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters("localhost", credentials=credentials))
+while True:
+    try:
+        print("Connecting to RabbitMQ...")
+        rabbit_connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=credentials)
+        )
+        break
+    except Exception:
+        print("RabbitMQ not ready, retrying in 3s...")
+        time.sleep(3)
+
     channel = rabbit_connection.channel()
     channel.queue_declare(queue="new_movies")
 
