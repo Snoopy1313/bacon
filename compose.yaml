@@ -10,8 +10,7 @@ services:
     build: ./bacon_web
     ports:
       - "5173:5173"
-    depends_on:
-      - backend_server
+
 
   rabbitmq:
     image: rabbitmq:management
