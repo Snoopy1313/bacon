@@ -4,22 +4,23 @@ from typing import List
 import pika
 import requests
 
-SERVER_LINK = "http://127.0.0.1:5000"
+SERVER_LINK = "http://backend_server:5000"
 
 
 
 if __name__ == "__main__":
     credentials = pika.PlainCredentials("admin", "admin")
-while True:
-    try:
-        print("Connecting to RabbitMQ...")
-        rabbit_connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=credentials)
-        )
-        break
-    except Exception:
-        print("RabbitMQ not ready, retrying in 3s...")
-        time.sleep(3)
+    while True:
+        try:
+            print("Connecting to RabbitMQ...")
+            rabbit_connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=credentials)
+            )
+            print("Success connecting to RabbitMQ!")
+            break
+        except Exception:
+            print("RabbitMQ not ready, retrying in 3s...")
+            time.sleep(3)
 
     channel = rabbit_connection.channel()
     channel.queue_declare(queue="new_movies")
@@ -30,9 +31,21 @@ while True:
 
     def callback(ch, method, properties, body):
         data = json.loads(body)
+        print(data)
         movie_name: str = data["Name"]
         movie_actors: List[str] = data["Actors"]
-        base_movie_id = requests.get(f"{SERVER_LINK}/get_highest_movie_id").json()["data"]
+
+        while True:
+            try:
+                print("Connecting to Backend...")
+                base_movie_id = requests.get(f"{SERVER_LINK}/get_highest_movie_id").json()["data"]
+                print("Success connecting to Backend!")
+                break
+            except Exception as e:
+                print(str(e))
+                print("Backend not ready, retrying in 3s...")
+                time.sleep(3)
+
         base_actor_id = requests.get(f"{SERVER_LINK}/get_highest_actor_id").json()["data"]
 
         movie_id = requests.get(f"{SERVER_LINK}/get_movie_id/{movie_name}").json()["data"]
