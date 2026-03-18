@@ -54,7 +54,6 @@ def add_movie_to_db(movie_id: str, movie_name: str):
 
 @app.post("/add_actor/<actor_id>/<actor_name>/")
 def add_actor_to_db(actor_id: str, actor_name: str):
-    print("in add_actor_to_db")
     return jsonify(data=add_actor(int(actor_id), actor_name, conn))
 
 @app.post("/add_movie_to_actor/<movie_id>/<actor_id>/")

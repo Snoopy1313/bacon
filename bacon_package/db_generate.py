@@ -83,7 +83,6 @@ def create_tables(conn: sqlite3.Connection) -> None:
 
 
 def add_actor(id: int, name: str, conn: sqlite3.Connection) -> None:
-    print("in add_actor")
     try:
         cur = conn.cursor()
         data = (id, name)

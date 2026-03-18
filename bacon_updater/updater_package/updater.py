@@ -31,7 +31,6 @@ if __name__ == "__main__":
 
     def callback(ch, method, properties, body):
         data = json.loads(body)
-        print(data)
         movie_name: str = data["Name"]
         movie_actors: List[str] = data["Actors"]
 
