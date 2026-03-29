@@ -1,0 +1,11 @@
+services:
+  backend_server:
+    build: .
+    ports:
+      - "5000:5000"
+  
+  web_server:
+    build: ./bacon_web
+    ports:
+      - "5173:5173"
+
