@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+WORKDIR /usr/local/app/
+
+COPY ./requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./updater_package ./updater_package
+COPY ./setup.py ./
+RUN pip install .
+
+CMD ["python3.12", "./updater_package/updater.py"]
